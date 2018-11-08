@@ -2,6 +2,7 @@ from django.db import models
 
 class Username(models.Model):
 	username = models.CharField(max_length=100, null=False, blank=False)
+	solved = models.IntegerField(default=0)
 
 class Challenge(models.Model):
 	name = models.CharField(max_length=100)
