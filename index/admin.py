@@ -1,32 +1,33 @@
 from django.contrib import admin
 from .models import *
 
+class UsernameInline(admin.StackedInline):
+    model = Username
+
+class ChallengeInline(admin.StackedInline):
+    model = Challenge
+
 class UsernameAdmin(admin.ModelAdmin):
 	fieldsets = [
-		(None, {'fields': ['user', 'name', 'skype', 'detail', 'picture']}),
+		(None, {'fields': ['username']}),
 	]
-	inlines = [BookInline, CourseInline]
-	list_display = ('id', 'user', 'name')
-	list_filter = ['user', 'name']
-	search_fields = ['user', 'name']
+	list_display = ('id', 'username')
 
 class ChallengeAdmin(admin.ModelAdmin):
 	fieldsets = [
-		(None, {'fields': ['user', 'name', 'skype', 'detail', 'picture']}),
+		(None, {'fields': ['name', 'type', 'flag', 'solved', 'description']}),
 	]
-	inlines = [BookInline, CourseInline]
-	list_display = ('id', 'user', 'name')
-	list_filter = ['user', 'name']
-	search_fields = ['user', 'name']
+	list_display = ('id', 'type', 'name', 'solved')
+	list_filter = ['type', 'name', 'solved']
 
 class SubmitAdmin(admin.ModelAdmin):
 	fieldsets = [
-		(None, {'fields': ['user', 'name', 'skype', 'detail', 'picture']}),
+		(None, {'fields': ['username', 'challenge']}),
 	]
-	inlines = [BookInline, CourseInline]
-	list_display = ('id', 'user', 'name')
-	list_filter = ['user', 'name']
-	search_fields = ['user', 'name']
+	inlines = [UsernameInline, ChallengeInline]
+	list_display = ('id', 'username', 'challenge')
+	list_filter = ['username', 'challenge']
+	search_fields = ['username', 'challenge']
 
 admin.site.register(Username, UsernameAdmin)
 admin.site.register(Challenge, ChallengeAdmin)
