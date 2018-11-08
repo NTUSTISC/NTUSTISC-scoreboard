@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Scoreboard</title>
+	<style>
+		body {
+		    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+		    font-size: 14px;
+		    line-height: 1.42857143;
+		    color: #333;
+		    background-color: #fff;
+		}
+
+		.container {
+		    width: 1170px;
+		    padding-right: 15px;
+		    padding-left: 15px;
+		    margin-right: auto;
+		    margin-left: auto;
+		}
+
+		.table {
+		    width: 100%;
+		    max-width: 100%;
+		    margin-bottom: 20px;
+		}
+
+		.table-bordered {
+		    border: 1px solid #ddd;
+		}
+
+		.table-responsive {
+		    min-height: .01%;
+		    overflow-x: auto;
+		}
+
+		.table-bordered>thead>tr>th, 
+		.table-bordered>tbody>tr>td {
+		    border: 1px solid #ddd;
+		    padding: 8px;
+		    line-height: 1.42857143;
+		}
+
+		.table-hover>tbody>tr:hover{
+			background-color: #f5f5f5;
+		}
+
+		.form-control {
+		    width: 85%;
+		    height: 34px;
+		    padding: 6px 12px;
+		    font-size: 14px;
+		    line-height: 1.42857143;
+		    color: #555;
+		    background-color: #fff;
+		    background-image: none;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+		    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+		}
+
+		.btn {
+		    display: inline-block;
+		    padding: 6px 12px;
+		    margin-bottom: 0;
+		    font-size: 14px;
+		    font-weight: 400;
+		    line-height: 1.42857143;
+		    text-align: center;
+		    white-space: nowrap;
+		    vertical-align: middle;
+		    touch-action: manipulation;
+		    cursor: pointer;
+		    user-select: none;
+		    background-image: none;
+		    border: 1px solid transparent;
+		    border-radius: 4px;
+		}
+
+		.btn-info {
+		    color: #fff;
+		    background-color: #5bc0de;
+		    border-color: #46b8da;
+		}
+
+		pre {
+		    display: block;
+		    padding: 9.5px;
+		    margin: 0 0 10px;
+		    font-size: 13px;
+		    line-height: 1.42857143;
+		    color: #333;
+		    word-break: break-all;
+		    word-wrap: break-word;
+		    background-color: #f5f5f5;
+		    border: 1px solid #ccc;
+		    border-radius: 4px;
+		    overflow: auto;
+		    font-family: Menlo,Monaco,Consolas,"Courier New",monospace;
+		}
+
+		code {
+		    padding: 2px 4px;
+		    font-size: 90%;
+		    color: #c7254e;
+		    background-color: #f9f2f4;
+		    border-radius: 4px;
+		}
+	</style>
+</head>
+<body>
+	{% if not key %}
+	<div class="container">
+		<div class="table-responsive">
+			<h2>Login</h2>
+			<form action="/login/" method="POST">
+				{% csrf_token %}
+	            <input class="form-control" type="text" name="username" placeholder="Enter username: ">
+	            <button class="btn btn-info">Login</button>
+	        </form>
+	    </div>
+	</div>
+	{% endif %}
+	<div class="container">
+		<div class="table-responsive">
+			<h2>Challenge</h2>
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Solved</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                	{% for challenge in challenge_list %}
+	                    <tr>
+	                        <td align="center">{% if challenge.user_solve %}[Solved] {% endif %}{{ challenge.name }}</td>
+	                        <td align="center">{{ challenge.solved }}</td>
+	                        <td><pre>{{ challenge.description }}</pre></td>
+	                    </tr>
+	                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+	</div>
+	{% if key %}
+	<div class="container">
+		<div class="table-responsive">
+			<h2>Submit Flag</h2>
+			<form action="/flag/" method="POST">
+				{% csrf_token %} 
+		        <input class="form-control" type="text" name="flag" placeholder="Submit your flag here">
+		        <button type="submit" class="btn btn-info">Submit</button>
+		    </form>
+    	</div>
+    </div>
+    {% endif %}
+	<div class="container">
+		<div class="table-responsive">
+			<h2>Events</h2>
+			<ul>
+				{% for submit in submit_list %}
+					<li><code>{{ submit.username.username }}</code> solved <code>{{ submit.challenge.name }}</code></li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+</body>
+</html>
