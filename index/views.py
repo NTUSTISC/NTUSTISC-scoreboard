@@ -43,6 +43,8 @@ def flag(request):
 			challenge = Challenge.objects.get(flag=flag)
 			if not Submit.objects.filter(username=username, challenge=challenge).exists():
 				Submit.objects.create(username=username, challenge=challenge)
+				username.solved += 1
+				username.save()
 				challenge.solved += 1
 				challenge.save()
 			else: return HttpResponse("<script>alert('你已經解過此題');window.location = '/scoreboard';</script>")

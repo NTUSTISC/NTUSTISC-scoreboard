@@ -6,11 +6,11 @@ class SubmitInline(admin.StackedInline):
 
 class UsernameAdmin(admin.ModelAdmin):
 	fieldsets = [
-		(None, {'fields': ['username']}),
+		(None, {'fields': ['username', 'solved']}),
 	]
 	inlines = [SubmitInline]
-	list_display = ('id', 'username')
-	list_filter = ['username']
+	list_display = ('id', 'username', 'solved')
+	list_filter = ['username', 'solved']
 
 class ChallengeAdmin(admin.ModelAdmin):
 	fieldsets = [
