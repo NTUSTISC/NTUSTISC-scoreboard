@@ -128,6 +128,7 @@
             <table class="table table-bordered table-hover">
                 <thead>
                     <tr>
+                    	<th>Type</th>
                         <th>Name</th>
                         <th>Solved</th>
                         <th>Description</th>
@@ -136,6 +137,7 @@
                 <tbody>
                 	{% for challenge in challenge_list %}
 	                    <tr>
+	                    	<td align="center">{{ challenge.type }}</td>
 	                        <td align="center">{% if challenge.user_solve %}[Solved] {% endif %}{{ challenge.name }}</td>
 	                        <td align="center">{{ challenge.solved }}</td>
 	                        <td><pre>{{ challenge.description }}</pre></td>
