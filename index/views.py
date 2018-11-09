@@ -1,8 +1,8 @@
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
+from django.contrib import messages
 
 from .models import *
-
 
 def is_login(request):
     if 'username' in request.session.keys():
@@ -15,6 +15,8 @@ def is_login(request):
 
 
 def index(request):
+    message = messages.get_messages(request)
+
     challenge_list = Challenge.objects.all()
     submit_list = Submit.objects.all().order_by('-id')[:20]
     rank = Username.objects.all().order_by('-solved')[:10]
@@ -23,7 +25,7 @@ def index(request):
     if logined:
         challenge_list = []
         username = Username.objects.get(username=request.session['username'])
-        for challenge in Challenge.objects.all():
+        for challenge in Challenge.objects.all().order_by('type'):
             challenge.user_solve = Submit.objects.filter(
                 username=username,
                 challenge=challenge
@@ -32,7 +34,7 @@ def index(request):
     return render(request, "index.html", {
         'key': logined,
         'username': username,
-        'solving_rate': int(username.solved/len(challenge_list) * 100) if username else 0,
+        'solving_rate': int(username.solved/len(challenge_list) * 100) if username and len(challenge_list) else 0,
         'rank': rank,
         'challenge_list': challenge_list,
         'submit_list': submit_list
@@ -68,26 +70,20 @@ def flag(request):
                 username.save()
                 challenge.solved += 1
                 challenge.save()
-                return JsonResponse({
-                    'correct': True,
-                    'message': "Flag 正確！"
-                })
+                messages.add_message(request, messages.SUCCESS, "Flag 正確！")
+                return redirect('../')
             else:
-                return JsonResponse({
-                    'correct': True,
-                    'message': "Flag 是正確沒錯，但你已經解過這題了"
-                })
+                messages.add_message(request, messages.INFO, "Flag 是正確沒錯啦，但你已經解過這題了")
+                return redirect('../')
         else:
-            return JsonResponse({
-                'correct': False,
-                'message': "Flag 錯誤 QQ"
-            })
+            messages.add_message(request, messages.ERROR, "Flag 錯誤 QQ")
+            return redirect('../')
     else:
         challenge = Challenge.objects.get(name="Just Here")
         return HttpResponse("""
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<title>405 Method Not Allowed</title>
-<h1>Method Not Allowed</h1>
-<p>The method is not allowed for the requested URL.</p>
-<!-- {0} -->
-""".format(challenge.flag))
+                <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+                <title>405 Method Not Allowed</title>
+                <h1>Method Not Allowed</h1>
+                <p>The method is not allowed for the requested URL.</p>
+                <!-- {0} -->
+                """.format(challenge.flag))
