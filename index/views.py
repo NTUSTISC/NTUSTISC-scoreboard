@@ -83,4 +83,11 @@ def flag(request):
                 'message': "Flag 錯誤 QQ"
             })
     else:
-        return HttpResponse("<h1>OAO?</h1>")
+        challenge = Challenge.objects.get(name="Just Here")
+        return HttpResponse("""
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<title>405 Method Not Allowed</title>
+<h1>Method Not Allowed</h1>
+<p>The method is not allowed for the requested URL.</p>
+<!-- {0} -->
+""".format(challenge.flag))
