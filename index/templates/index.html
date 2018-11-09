@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Scoreboard</title>
+	<title>NTUSTISC | Proving Grounds</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
 	<style>
@@ -52,10 +52,10 @@
 		<div class="hero-body">
 			<div class="container">
 				<h1 class="title">
-					台科資安社 | 試煉場
+					NTUSTISC | Proving Grounds
 				</h1>
 				<h2 class="subtitle">
-					NTUSTISC
+					A platform for training security skills.
 				</h2>
 			</div>
 		</div>
@@ -66,14 +66,14 @@
 		<div class="columns">
 			<!-- Main Section -->
 			<div class="column is-four-fifths">
-					{% if messages %}
-					{% for message in messages %}
-					<div id="flag-notification" class="notification {{message.tags}}">
-						<button class="delete"></button>
-						<span class="content">{{ message }}</span>
-					</div>
-					{% endfor %}
-					{% endif %}
+				{% if messages %}
+				{% for message in messages %}
+				<div id="flag-notification" class="notification {{message.tags}}">
+					<button class="delete"></button>
+					<span class="content">{{ message }}</span>
+				</div>
+				{% endfor %}
+				{% endif %}
 				<!-- Challenges -->
 				<h1 class="title" id="challenges">
 					Challenges
@@ -216,13 +216,31 @@
 	<footer class="footer">
 		<div class="has-text-centered">
 			<p>
-				NTUSTISC
+				Copyright © 2018 NTUSTISC.
 			</p>
+			<a href="/" target="_blank">
+				<span class="icon">
+					<i class="fas fa-home"></i>
+				</span>
+				Home Page
+			</a>
 			<a href="https://www.facebook.com/ntust.hacking/" target="_blank">
 				<span class="icon">
 					<i class="fab fa-facebook"></i>
 				</span>
 				Facebook
+			</a>
+			<a href="https://github.com/NTUSTISC" target="_blank">
+				<span class="icon">
+					<i class="fab fa-github"></i>
+				</span>
+				Github
+			</a>
+			<a href="https://www.youtube.com/channel/UC4-PD2BdlYWd807BhJZkjIg" target="_blank">
+				<span class="icon">
+					<i class="fab fa-youtube"></i>
+				</span>
+				Youtube
 			</a>
 		</div>
 	</footer>
