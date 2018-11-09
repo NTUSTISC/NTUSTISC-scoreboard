@@ -1,0 +1,80 @@
+.container {
+    margin-top: 3em;
+}
+.is-pinned {
+    display: block;
+    position: sticky;
+    top: 0;
+}
+
+footer {
+    position: static;
+    margin-top: 3em;
+    margin-bottom: 0px;
+    color: #AAAAAA
+}
+pre {
+    padding: 0.5rem 0.5rem !important;
+}
+
+/* circular progress chart */
+.circular-chart {
+    display: block;
+    margin: 10px auto;
+    max-width: 80%;
+    max-height: 250px;
+}
+.circle {
+    stroke: #4CC790;
+    fill: none;
+    stroke-width: 2.8;
+    stroke-linecap: round;
+    animation: progress 0.5s ease-out forwards;
+}
+@keyframes progress {
+    0% {
+        stroke-dasharray: 0 100;
+    }
+}
+.circle-bg {
+    fill: none;
+    stroke: #eee;
+    stroke-width: 3.8;
+}
+.percentage {
+    fill: #666;
+    font-family: sans-serif;
+    font-size: 0.5em;
+    text-anchor: middle;
+}
+
+/* type tag color */
+.tag:not(body).is-misc {
+    background-color: #00d1b2;
+    color: #fff;
+}
+
+.tag:not(body).is-crypto {
+    background-color: #3273dc;
+    color: #fff;
+}
+
+.tag:not(body).is-web {
+    background-color: #209cee;
+    color: #fff;
+}
+
+.tag:not(body).is-pwn {
+    background-color: #23d160;
+    color: #fff;
+}
+
+.tag:not(body).is-rev {
+    background-color: #ffdd57;
+    color: rgba(0, 0, 0, 0.7);
+}
+
+.tag:not(body).is-stego {
+    background-color: #ff3860;
+    color: #fff;
+}

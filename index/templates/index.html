@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
 
@@ -5,46 +6,7 @@
 	<title>NTUSTISC | Proving Grounds</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
-	<style>
-		.container {
-			margin-top: 3em;
-		}
-		footer {
-			position: static;
-			margin-top: 3em;
-			margin-bottom: 0px;
-			color: #AAAAAA
-		}
-		.circular-chart {
-			display: block;
-			margin: 10px auto;
-			max-width: 80%;
-			max-height: 250px;
-		}
-		.circle {
-			stroke: #4CC790;
-			fill: none;
-			stroke-width: 2.8;
-			stroke-linecap: round;
-			animation: progress 0.5s ease-out forwards;
-		}
-		@keyframes progress {
-			0% {
-				stroke-dasharray: 0 100;
-			}
-		}
-		.circle-bg {
-			fill: none;
-			stroke: #eee;
-			stroke-width: 3.8;
-		}
-		.percentage {
-			fill: #666;
-			font-family: sans-serif;
-			font-size: 0.5em;
-			text-anchor: middle;
-		}
-	</style>
+	<link rel="stylesheet" href="{% static "style.css" %}">
 </head>
 
 <body>
@@ -90,6 +52,7 @@
 					<tbody>
 						{% for challenge in challenge_list %}
 						<tr>
+							{% comment %} <td><span class="tag is-{{ challenge.type }}">{{ challenge.type }}</span></td> {% endcomment %}
 							<td>{{ challenge.type }}</td>
 							<td>
 								{% if challenge.user_solve %}
@@ -201,7 +164,8 @@
 				<!-- /User's Information -->
 				{% endif %}
 				<hr>
-				<aside class="menu">
+				<div class="menu-ref"></div>
+				<aside class="menu is-clipped">
 					<ul class="menu-list">
 						<li><a href="#challenges">Challenges</a></li>
 						{% if key %}<li><a href="#flag">Submit Flag</a></li>{% endif %}
@@ -251,6 +215,20 @@
 			close[i].onclick = () => {
 				close[i].parentElement.style.display = 'none';
 			}
+		}
+
+		window.addEventListener('scroll', function () {
+			window.requestAnimationFrame(whenScrolling);
+		});
+
+		var menu_ref = document.querySelector(".menu-ref");
+		var menu = document.querySelector("aside");
+		function whenScrolling() {
+			var bounds = menu_ref.getBoundingClientRect();
+			if (bounds.top < 1)
+				menu.classList.add('is-pinned');
+			else
+				menu.classList.remove('is-pinned');
 		}
 	</script>
 </body>
