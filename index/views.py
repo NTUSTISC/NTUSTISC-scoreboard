@@ -15,7 +15,7 @@ def is_login(request):
 
 
 def index(request):
-    challenge_list = Challenge.objects.all()
+    challenge_list = Challenge.objects.all().order_by('type')
     submit_list = Submit.objects.all().order_by('-id')[:20]
     rank = Username.objects.all().order_by('-solved')[:10]
     logined = is_login(request)
