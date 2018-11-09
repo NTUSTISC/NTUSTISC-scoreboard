@@ -17,7 +17,9 @@ def is_login(request):
 def index(request):
     challenge_list = Challenge.objects.all()
     submit_list = Submit.objects.all().order_by('-id')[:20]
+    rank = Username.objects.all().order_by('-solved')[:10]
     logined = is_login(request)
+    username = None
     if logined:
         challenge_list = []
         username = Username.objects.get(username=request.session['username'])
@@ -29,7 +31,9 @@ def index(request):
             challenge_list.append(challenge)
     return render(request, "index.html", {
         'key': logined,
-        'username': request.session['username'] if logined else None,
+        'username': username,
+        'solving_rate': int(username.solved/len(challenge_list) * 100) if username else 0,
+        'rank': rank,
         'challenge_list': challenge_list,
         'submit_list': submit_list
     })
@@ -38,6 +42,8 @@ def index(request):
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')
+        if username.strip() == "":
+            return redirect("../")
         if Username.objects.filter(username=username).exists():
             user = Username.objects.get(username=username)
         else:
@@ -45,6 +51,9 @@ def login(request):
         request.session['username'] = user.username
     return redirect("../")
 
+def logout(request):
+    del request.session['username']
+    return redirect("../")
 
 def flag(request):
     if request.method == 'POST':
