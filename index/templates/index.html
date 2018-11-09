@@ -2,7 +2,7 @@
 <html>
 
 <head>
-	<title>Scoreboard</title>
+	<title>NTUSTISC | Proving Grounds</title>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
 	<style>
@@ -52,10 +52,10 @@
 		<div class="hero-body">
 			<div class="container">
 				<h1 class="title">
-					台科資安社 | 試煉場
+					NTUSTISC | Proving Grounds
 				</h1>
 				<h2 class="subtitle">
-					NTUSTISC
+					A platform for training security skills.
 				</h2>
 			</div>
 		</div>
@@ -66,8 +66,16 @@
 		<div class="columns">
 			<!-- Main Section -->
 			<div class="column is-four-fifths">
+				{% if messages %}
+				{% for message in messages %}
+				<div id="flag-notification" class="notification {{message.tags}}">
+					<button class="delete"></button>
+					<span class="content">{{ message }}</span>
+				</div>
+				{% endfor %}
+				{% endif %}
 				<!-- Challenges -->
-				<h1 class="title">
+				<h1 class="title" id="challenges">
 					Challenges
 				</h1>
 				<table class="table is-hoverable is-fullwidth">
@@ -103,22 +111,18 @@
 				<h1 class="title" id="flag">
 					Submit Flag
 				</h1>
-				<form id="flag-form">
+				<form id="flag-form" method="POST" action="flag/">
 					{% csrf_token %}
 					<div class="field has-addons">
-						<div class="control">
-							<input id="flag-input" class="input" type="text" name="flag" placeholder="Submit your flag here">
+						<div class="control is-expanded">
+							<input id="flag-input" class="input" type="text" name="flag" placeholder="flag{******}">
 						</div>
 						<div class="control">
-							<button type="button" id="submit-flag" class="button is-primary">Submit</button>
+							<button type="submit" id="submit-flag" class="button is-primary">Submit</button>
 						</div>
 					</div>
 				</form>
 				<br>
-				<div id="flag-notification" class="notification" style="display:none">
-					<button class="delete"></button>
-					<span class="content"></span>
-				</div>
 				<!-- /Submit Flag -->
 				{% endif %}
 
@@ -179,7 +183,7 @@
 						<p class="title is-4">
 							@{{username.username}}
 						</p>
-						<div class="content">
+						<div class="content has-text-centered">
 							<svg viewBox="0 0 36 36" class="circular-chart">
 								<path class="circle-bg" d="M18 2.0845
 									  a 15.9155 15.9155 0 0 1 0 31.831
@@ -212,13 +216,31 @@
 	<footer class="footer">
 		<div class="has-text-centered">
 			<p>
-				NTUSTISC
+				Copyright © 2018 NTUSTISC.
 			</p>
+			<a href="/" target="_blank">
+				<span class="icon">
+					<i class="fas fa-home"></i>
+				</span>
+				Home Page
+			</a>
 			<a href="https://www.facebook.com/ntust.hacking/" target="_blank">
 				<span class="icon">
 					<i class="fab fa-facebook"></i>
 				</span>
 				Facebook
+			</a>
+			<a href="https://github.com/NTUSTISC" target="_blank">
+				<span class="icon">
+					<i class="fab fa-github"></i>
+				</span>
+				Github
+			</a>
+			<a href="https://www.youtube.com/channel/UC4-PD2BdlYWd807BhJZkjIg" target="_blank">
+				<span class="icon">
+					<i class="fab fa-youtube"></i>
+				</span>
+				Youtube
 			</a>
 		</div>
 	</footer>
@@ -229,34 +251,6 @@
 			close[i].onclick = () => {
 				close[i].parentElement.style.display = 'none';
 			}
-		}
-
-		const input = document.getElementById('flag-input');
-		input.addEventListener("keydown", function (event) {
-			if (event.keyCode === 13) {
-				event.preventDefault();
-				document.getElementById("submit-flag").click();
-			}
-		});
-
-		document.getElementById('submit-flag').onclick = () => {
-			fetch('flag/', {
-				method: 'POST',
-				body: new FormData(document.getElementById('flag-form'))
-			})
-				.then(r => r.json())
-				.then(json => {
-					const notification = document.getElementById('flag-notification');
-					notification.style.display = 'block';
-					if (json.correct) {
-						notification.classList.add('is-success');
-						notification.classList.remove('is-danger');
-					} else {
-						notification.classList.add('is-danger');
-						notification.classList.remove('is-success');
-					}
-					notification.lastElementChild.innerHTML = json.message;
-				})
 		}
 	</script>
 </body>
