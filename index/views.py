@@ -15,7 +15,7 @@ def is_login(request):
 
 
 def index(request):
-    challenge_list = Challenge.objects.all().order_by('type')
+    challenge_list = Challenge.objects.all()
     submit_list = Submit.objects.all().order_by('-id')[:20]
     rank = Username.objects.all().order_by('-solved')[:10]
     logined = is_login(request)
@@ -32,7 +32,7 @@ def index(request):
     return render(request, "index.html", {
         'key': logined,
         'username': username,
-        'solving_rate': int(username.solved/len(challenge_list) * 100) if username else 0,
+        'solving_rate': int(username.solved / len(challenge_list) * 100) if username else 0,
         'rank': rank,
         'challenge_list': challenge_list,
         'submit_list': submit_list
