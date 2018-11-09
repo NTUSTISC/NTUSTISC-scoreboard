@@ -80,9 +80,13 @@
 					<tbody>
 						{% for challenge in challenge_list %}
 						<tr>
-							<td align="center">{{ challenge.type }}</td>
-							<td align="center">{% if challenge.user_solve %}<span class="icon has-text-success"><i class="fas fa-check"></i></span>{% endif %}{{ challenge.name }}</td>
-							<td align="center">{{ challenge.solved }}</td>
+							<td>{{ challenge.type }}</td>
+							<td>
+								{% if challenge.user_solve %}
+								<span class="icon has-text-success"><i class="fas fa-check"></i></span>
+								{% endif %}{{ challenge.name }}
+							</td>
+							<td>{{ challenge.solved }}</td>
 							<td>
 								<pre>{{ challenge.description }}</pre>
 							</td>
