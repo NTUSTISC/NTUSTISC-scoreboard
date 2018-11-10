@@ -24,7 +24,7 @@ def index(request):
     if logined:
         challenge_list = []
         username = Username.objects.get(username=request.session['username'])
-        for challenge in Challenge.objects.all():
+        for challenge in Challenge.objects.all().order_by('type', 'id'):
             challenge.user_solve = Submit.objects.filter(
                 username=username,
                 challenge=challenge
