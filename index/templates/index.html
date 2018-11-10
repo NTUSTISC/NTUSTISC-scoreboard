@@ -39,8 +39,11 @@
 				<!-- Challenges -->
 				<h1 class="title" id="challenges">
 					Challenges
+					<span class="tags" id="filter-list" style="display:inline">
+
+					</span>
 				</h1>
-				<table class="table is-hoverable is-fullwidth">
+				<table class="table is-hoverable is-fullwidth" id="challenges-table">
 					<thead>
 						<tr>
 							<th>Type</th>
@@ -52,8 +55,7 @@
 					<tbody>
 						{% for challenge in challenge_list %}
 						<tr>
-							{% comment %} <td><span class="tag is-{{ challenge.type }}">{{ challenge.type }}</span></td> {% endcomment %}
-							<td>{{ challenge.type }}</td>
+							<td><a><span class="tag is-{{ challenge.type }} type-tag">{{ challenge.type }}</span></a></td>
 							<td>
 								{% if challenge.user_solve %}
 								<span class="icon has-text-success"><i class="fas fa-check"></i></span>
@@ -68,7 +70,6 @@
 					</tbody>
 				</table>
 				<!-- /Challenges -->
-
 				{% if key %}
 				<!-- Submit Flag -->
 				<h1 class="title" id="flag">
@@ -92,7 +93,7 @@
 				<h1 class="title" id="rank">
 					Rank
 				</h1>
-				<table class="table is-hoverable is-fullwidth">
+				<table class="table is-hoverable is-fullwidth" id="challenges-table">
 					<thead>
 						<tr>
 							<th>#</th>
@@ -165,7 +166,7 @@
 				{% endif %}
 				<hr>
 				<div class="menu-ref"></div>
-				<aside class="menu is-clipped">
+				<aside class="menu">
 					<ul class="menu-list">
 						<li><a href="#challenges">Challenges</a></li>
 						{% if key %}<li><a href="#flag">Submit Flag</a></li>{% endif %}
@@ -229,6 +230,47 @@
 				menu.classList.add('is-pinned');
 			else
 				menu.classList.remove('is-pinned');
+		}
+
+		var filter_tags_list = document.getElementById('filter-list');
+		var filter_list = new Set();
+		var type_tags = document.querySelectorAll('.type-tag');
+		type_tags.forEach(tag => {
+			tag.addEventListener('click', function () {
+				if (!(filter_list.has(tag.innerText))) {
+					var filter_tag = tag.cloneNode(true);
+					filter_tag.classList.remove('type-tag');
+					filter_tag.innerHTML += '<button class="delete is-small"></button>';
+					const close = filter_tag.querySelector('.delete');
+					close.onclick = () => {
+						close.parentElement.style.display = 'none';
+						console.log(close);
+						filter_list.delete(close.parentElement.innerText);
+						typeFilter();
+					}
+					filter_tags_list.appendChild(filter_tag);
+					filter_list.add(tag.innerText);
+					typeFilter();
+				}
+			});
+		})
+
+
+		function typeFilter() {
+			var filter = [...filter_list];
+			var table = document.getElementById("challenges-table");
+			var tr = table.querySelectorAll("tr");
+			for (let i = 0; i < tr.length; i++) {
+				var td = tr[i].querySelector("td");
+				console.log(td);
+				if (td) {
+					if (filter.length == 0 || filter.some(a => td.innerHTML.indexOf(a) > -1)) {
+						tr[i].style.display = "";
+					} else {
+						tr[i].style.display = "none";
+					}
+				}
+			}
 		}
 	</script>
 </body>
