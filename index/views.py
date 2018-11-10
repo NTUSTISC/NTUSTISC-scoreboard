@@ -16,7 +16,7 @@ def is_login(request):
 
 def index(request):
     message = messages.get_messages(request)
-    challenge_list = Challenge.objects.all()
+    challenge_list = Challenge.objects.all().order_by('type', 'id')
     submit_list = Submit.objects.all().order_by('-id')[:20]
     rank = Username.objects.all().order_by('-solved')[:10]
     logined = is_login(request)
@@ -24,7 +24,7 @@ def index(request):
     if logined:
         challenge_list = []
         username = Username.objects.get(username=request.session['username'])
-        for challenge in Challenge.objects.all().order_by('type'):
+        for challenge in Challenge.objects.all():
             challenge.user_solve = Submit.objects.filter(
                 username=username,
                 challenge=challenge
