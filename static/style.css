@@ -1,6 +1,12 @@
 .container {
     margin-top: 3em;
 }
+@media only screen and (max-width: 1088px) {
+    .container {
+        margin-left: 1em;
+        margin-right: 1em;
+    }
+}
 .is-pinned {
     display: block;
     position: sticky;

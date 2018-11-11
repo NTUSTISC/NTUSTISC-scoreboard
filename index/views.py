@@ -42,8 +42,9 @@ def index(request):
 
 def login(request):
     if request.method == 'POST':
-        username = request.POST.get('username')
-        if username.strip() == "":
+        username = request.POST.get('username').strip()
+        if not 0 < len(username) <= 64:
+            messages.add_message(request, messages.ERROR, "Invalid Username.")
             return redirect("../")
         if Username.objects.filter(username=username).exists():
             user = Username.objects.get(username=username)
