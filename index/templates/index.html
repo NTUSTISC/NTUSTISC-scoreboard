@@ -4,6 +4,7 @@
 
 <head>
 	<title>NTUSTISC | Proving Grounds</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
 	<link rel="stylesheet" href="{% static "style.css" %}">
@@ -24,13 +25,12 @@
 	</section>
 
 	<div class="container">
-
 		<div class="columns">
 			<!-- Main Section -->
 			<div class="column is-four-fifths">
 				{% if messages %}
 				{% for message in messages %}
-				<div id="flag-notification" class="notification {{message.tags}}">
+				<div id="notification" class="notification {{message.tags}}">
 					<button class="delete"></button>
 					<span class="content">{{ message }}</span>
 				</div>
@@ -39,9 +39,7 @@
 				<!-- Challenges -->
 				<h1 class="title" id="challenges">
 					Challenges
-					<span class="tags" id="filter-list" style="display:inline">
-
-					</span>
+					<span class="tags" id="filter-list" style="display:inline"></span>
 				</h1>
 				<table class="table is-hoverable is-fullwidth" id="challenges-table">
 					<thead>
@@ -211,40 +209,35 @@
 	</footer>
 
 	<script>
-		const close = document.getElementsByClassName('delete');
-		for (let i = 0; i < close.length; i++) {
-			close[i].onclick = () => {
-				close[i].parentElement.style.display = 'none';
+		const close = document.querySelector('.delete');
+		if (close)
+			close.onclick = () => {
+				close.parentElement.style.display = 'none';
 			}
-		}
 
 		window.addEventListener('scroll', function () {
-			window.requestAnimationFrame(whenScrolling);
+			window.requestAnimationFrame(function () {
+				const menu_ref = document.querySelector(".menu-ref");
+				const menu = document.querySelector("aside");
+				if (menu_ref.scrollTop < 1)
+					menu.classList.add('is-pinned');
+				else
+					menu.classList.remove('is-pinned');
+			});
 		});
 
-		var menu_ref = document.querySelector(".menu-ref");
-		var menu = document.querySelector("aside");
-		function whenScrolling() {
-			var bounds = menu_ref.getBoundingClientRect();
-			if (bounds.top < 1)
-				menu.classList.add('is-pinned');
-			else
-				menu.classList.remove('is-pinned');
-		}
-
-		var filter_tags_list = document.getElementById('filter-list');
-		var filter_list = new Set();
-		var type_tags = document.querySelectorAll('.type-tag');
+		const filter_tags_list = document.getElementById('filter-list');
+		const filter_list = new Set();
+		const type_tags = document.querySelectorAll('.type-tag');
 		type_tags.forEach(tag => {
 			tag.addEventListener('click', function () {
 				if (!(filter_list.has(tag.innerText))) {
-					var filter_tag = tag.cloneNode(true);
+					const filter_tag = tag.cloneNode(true);
 					filter_tag.classList.remove('type-tag');
 					filter_tag.innerHTML += '<button class="delete is-small"></button>';
 					const close = filter_tag.querySelector('.delete');
 					close.onclick = () => {
 						close.parentElement.style.display = 'none';
-						console.log(close);
 						filter_list.delete(close.parentElement.innerText);
 						typeFilter();
 					}
@@ -255,14 +248,12 @@
 			});
 		})
 
-
 		function typeFilter() {
-			var filter = [...filter_list];
-			var table = document.getElementById("challenges-table");
-			var tr = table.querySelectorAll("tr");
+			const filter = [...filter_list];
+			const table = document.getElementById("challenges-table");
+			const tr = table.querySelectorAll("tr");
 			for (let i = 0; i < tr.length; i++) {
-				var td = tr[i].querySelector("td");
-				console.log(td);
+				const td = tr[i].querySelector("td");
 				if (td) {
 					if (filter.length == 0 || filter.some(a => td.innerHTML.indexOf(a) > -1)) {
 						tr[i].style.display = "";
