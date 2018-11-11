@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'h-_19s5izfqtfu2u-@@pm3oteghpw@)flk5#yl8og$q=&h58=%'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", False)
+DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'scoreboard',
         'USER': 'root',
-        'PASSWORD': 'J3llyF1sh?',
+        'PASSWORD': "J3llyF1sh?",
         'HOST': '0.0.0.0',
         'PORT': '5432',
     }
@@ -134,3 +134,11 @@ MESSAGE_TAGS = {
     messages.SUCCESS: 'is-success',
     messages.INFO: 'is-info'
 }
+
+
+# Try to override some configs
+try:
+    from .production_config import *
+except ImportError as e:
+    print("[Development mode]")
+    pass
