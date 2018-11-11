@@ -1,6 +1,7 @@
+scoreboard/production_config.py
 .vscode/
 .DS_Store
-*.pyc
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
