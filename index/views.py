@@ -7,7 +7,10 @@ from .models import *
 def is_login(request):
     if 'username' in request.session.keys():
         if len(request.session['username']) > 0:
-            return True
+            if Username.objects.filter(username=request.session['username']).exists():
+                return True
+            else:
+                return False
         else:
             return False
     else:
