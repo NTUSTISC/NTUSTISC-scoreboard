@@ -10,7 +10,7 @@ class Username(models.Model):
 class Challenge(models.Model):
 	name = models.CharField(max_length=100)
 	type = models.CharField(max_length=100, default='misc')
-	flag = models.CharField(max_length=100)
+	flag = models.CharField(max_length=250)
 	solved = models.IntegerField(default=0)
 	description = models.CharField(max_length=100)
 	user_solve = models.BooleanField(default=False)
