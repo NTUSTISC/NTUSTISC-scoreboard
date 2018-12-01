@@ -1,6 +1,7 @@
+from django.contrib import messages
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.utils import timezone
 
 from .models import *
 
@@ -21,7 +22,7 @@ def index(request):
     message = messages.get_messages(request)
     challenge_list = Challenge.objects.all().order_by('type', 'id')
     submit_list = Submit.objects.all().order_by('-id')[:20]
-    rank = Username.objects.all().order_by('-solved')[:10]
+    rank = Username.objects.all().order_by('-solved', 'last_solved_time')[:10]
     logined = is_login(request)
     username = None
     if logined:
@@ -70,6 +71,7 @@ def flag(request):
             if not Submit.objects.filter(username=username, challenge=challenge).exists():
                 Submit.objects.create(username=username, challenge=challenge)
                 username.solved += 1
+                username.last_solved_time = timezone.now()
                 username.save()
                 challenge.solved += 1
                 challenge.save()
