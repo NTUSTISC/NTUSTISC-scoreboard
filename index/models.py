@@ -1,11 +1,13 @@
 from django.db import models
+from django.utils import timezone
 
 class Username(models.Model):
 	username = models.CharField(max_length=100, null=False, blank=False)
 	solved = models.IntegerField(default=0)
+	last_solved_time = models.DateTimeField(default=timezone.now)
 
 	def __str__(self):
-		return "username: {}; solved: {}".format(self.username, str(self.solved))
+		return "username: {}; solved: {}; last_solved_time: {}".format(self.username, self.solved, self.last_solved_time)
 
 class Challenge(models.Model):
 	name = models.CharField(max_length=100)
