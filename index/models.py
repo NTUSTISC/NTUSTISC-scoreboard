@@ -7,7 +7,7 @@ class Username(models.Model):
 	last_solved_time = models.DateTimeField(default=timezone.now)
 
 	def __str__(self):
-		return "username: {}; solved: {}; last_solved_time: {}".format(self.username, self.solved, self.last_solved_time)
+		return "username: {}; solved: {};".format(self.username, self.solved)
 
 class Challenge(models.Model):
 	name = models.CharField(max_length=100)
