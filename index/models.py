@@ -23,6 +23,7 @@ class Challenge(models.Model):
 class Submit(models.Model):
 	username = models.ForeignKey(Username, on_delete=models.CASCADE)
 	challenge = models.ForeignKey(Challenge, on_delete=models.CASCADE)
+	submit_time = models.DateTimeField(default=timezone.now)
 
 	def __str__(self):
-		return "username: {}; challenge: {}".format(self.username.__str__(), self.challenge.__str__())
+		return "username: {}; challenge: {}; submit_time: {}".format(self.username.__str__(), self.challenge.__str__(), self.submit_time)

@@ -116,7 +116,7 @@
 				</h1>
 				<ul>
 					{% for submit in submit_list %}
-					<li><code>{{ submit.username.username }}</code> solved <code>{{ submit.challenge.name }}</code></li>
+					<li><code>{{ submit.username.username }}</code> solved <code>{{ submit.challenge.name }}</code> at <code>{{ submit.submit_time }}</code></li>
 					{% endfor %}
 				</ul>
 				<!-- /Events -->

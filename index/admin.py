@@ -22,9 +22,9 @@ class ChallengeAdmin(admin.ModelAdmin):
 
 class SubmitAdmin(admin.ModelAdmin):
 	fieldsets = [
-		(None, {'fields': ['username', 'challenge']}),
+		(None, {'fields': ['username', 'challenge', 'submit_time']}),
 	]
-	list_display = ('id', 'username', 'challenge')
+	list_display = ('id', 'username', 'challenge', 'submit_time')
 	list_filter = ['username', 'challenge']
 	search_fields = ['username', 'challenge']
 
