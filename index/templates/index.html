@@ -7,7 +7,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.css" />
 	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css">
-	<link rel="stylesheet" href="{% static "style.css" %}">
+	<link rel="stylesheet" href="{% static 'style.css' %}">
 </head>
 
 <body>
@@ -47,6 +47,7 @@
 							<th>Type</th>
 							<th>Name</th>
 							<th>Solved</th>
+							{% if teamed %}<th>Score</th>{% endif %}
 							<th>Description</th>
 						</tr>
 					</thead>
@@ -60,6 +61,7 @@
 								{% endif %}{{ challenge.name }}
 							</td>
 							<td>{{ challenge.solved }}</td>
+							{% if teamed %}<td>{{ challenge.score }}</td>{% endif %}
 							<td>
 								<pre>{{ challenge.description }}</pre>
 							</td>
@@ -68,7 +70,7 @@
 					</tbody>
 				</table>
 				<!-- /Challenges -->
-				{% if key %}
+				{% if logined %}
 				<!-- Submit Flag -->
 				<h1 class="title" id="flag">
 					Submit Flag
@@ -95,16 +97,26 @@
 					<thead>
 						<tr>
 							<th>#</th>
+							{% if not teamed %}
 							<th>ID</th>
 							<th>Solved</th>
+							{% else %}
+							<th>TeamID</th>
+							<th>Score</th>
+							{% endif %}
 						</tr>
 					</thead>
 					<tbody>
 						{% for r in rank %}
 						<tr>
 							<td>{{ forloop.counter }}</td>
+							{% if not teamed %}
 							<td>{{ r.username }}</td>
 							<td>{{ r.solved }}</td>
+							{% else %}
+							<td>{{ r.teamname }}</td>
+							<td>{{ r.score }}</td>
+							{% endif %}
 						</tr>
 						{% endfor %}
 					</tbody>
@@ -116,7 +128,17 @@
 				</h1>
 				<ul>
 					{% for submit in submit_list %}
-					<li><code>{{ submit.username.username }}</code> solved <code>{{ submit.challenge.name }}</code> at <code>{{ submit.submit_time }}</code></li>
+					<li>
+						{% if not teamed %}
+						<code>{{ submit.username.username }}</code>
+						{% else %}
+						<code>{{ submit.team.teamname }}</code>
+						{% endif %}
+						solved
+						<code>{{ submit.challenge.name }}</code>
+						at
+						<code>{{ submit.submit_time }}</code>
+					</li>
 					{% endfor %}
 				</ul>
 				<!-- /Events -->
@@ -126,9 +148,21 @@
 
 			<!-- Menu Section -->
 			<div class="column">
-				{% if not key %}
+				{% if not logined %}
 				<form action="login/" method="POST">
 					{% csrf_token %}
+					{% if ctfing %}
+					<div class="field has-addons">
+						<div class="control">
+							<input class="input" type="text" name="teamname" placeholder="Enter Teamname">
+						</div>
+					</div>
+					<div class="field has-addons">
+						<div class="control">
+							<input class="input" type="text" name="token" placeholder="Enter Token">
+						</div>
+					</div>
+					{% endif %}
 					<div class="field has-addons">
 						<div class="control">
 							<input class="input" type="text" name="username" placeholder="Enter Username">
@@ -139,6 +173,7 @@
 					</div>
 				</form>
 				{% else %}
+				{% if not teamed %}
 				<!-- User's Information -->
 				<div class="card">
 					<div class="card-content">
@@ -161,13 +196,46 @@
 					</div>
 				</div>
 				<!-- /User's Information -->
+				{% else %}
+				<!-- Team's Information -->
+				<div class="card">
+					<div class="card-content">
+						<p class="title is-4">
+							{{username.username}}<br>
+							@{{team.teamname}}
+						</p>
+						<div class="content has-text-centered">
+							<svg viewBox="0 0 36 36" class="circular-chart">
+								<path class="circle-bg" d="M18 2.0845
+									  a 15.9155 15.9155 0 0 1 0 31.831
+									  a 15.9155 15.9155 0 0 1 0 -31.831" />
+								<path class="circle" stroke-dasharray="{{solving_rate}}, 100" d="M18 2.0845
+											a 15.9155 15.9155 0 0 1 0 31.831
+											a 15.9155 15.9155 0 0 1 0 -31.831" />
+								<text x="18" y="20.35" class="percentage">{{solving_rate}}%</text>
+							</svg>
+							<p>Score: {{team.score}}</p>
+							<p>Solved: {{team.solved}}/{{challenge_list|length}}</p>
+							<p>Token: {{team.token}}</p>
+						</div>
+						<div class="content has-text-centered">
+							TeamUser:
+							{% for teamuser in teamuser_list %}
+							<li>{{ teamuser.username.username }}</li>
+							{% endfor %}
+						</div>
+						<a href="logout/" class="card-footer-item button is-danger">Logout</a>
+					</div>
+				</div>
+				<!-- /Team's Information -->
+				{% endif %}
 				{% endif %}
 				<hr>
 				<div class="menu-ref"></div>
 				<aside class="menu">
 					<ul class="menu-list">
 						<li><a href="#challenges">Challenges</a></li>
-						{% if key %}<li><a href="#flag">Submit Flag</a></li>{% endif %}
+						{% if logined %}<li><a href="#flag">Submit Flag</a></li>{% endif %}
 						<li><a href="#rank">Rank</a></li>
 						<li><a href="#events">Events</a></li>
 					</ul>

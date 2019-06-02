@@ -1,4 +1,3 @@
-scoreboard/production_config.py
 .vscode/
 .DS_Store
 
@@ -116,3 +115,7 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# dev/killua4564
+migrations/
+*.sql
