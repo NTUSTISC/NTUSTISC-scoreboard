@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^login/$', views.login),
     url(r'^logout/$', views.logout),
     url(r'^flag/$', views.flag),
+    url(r'^ctf_finish/$', views.ctf_finish)
 ]

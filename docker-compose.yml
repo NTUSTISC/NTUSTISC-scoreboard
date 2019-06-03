@@ -1,0 +1,32 @@
+version: "3.5"
+
+services:
+  scoreboard:
+    build:
+      context: ./
+    image: scoreboard:latest
+    container_name: scoreboard
+    ports:
+      - 8000:8000/tcp
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    environment:
+      - PYTHONUNBUFFERED=0
+    command: bash /usr/src/app/entrypoint.sh
+    networks:
+      - ntustisc
+
+  postgresql:
+    image: postgres:latest
+    container_name: postgresql
+    environment:
+      POSTGRES_DB: scoreboard
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: P@ssW0rd
+    networks:
+      - ntustisc
+
+networks:
+  ntustisc:
+    name: ntustisc
