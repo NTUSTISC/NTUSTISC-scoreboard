@@ -41,7 +41,6 @@
 					Challenges
 					<span class="tags" id="filter-list" style="display:inline"></span>
 				</h1>
-<<<<<<< HEAD
 				<div class="table-container">
 					<table class="table is-hoverable is-fullwidth" id="challenges-table">
 						<thead>
@@ -49,19 +48,23 @@
 								<th>Type</th>
 								<th>Name</th>
 								<th>Solved</th>
+								{% if teamed %}<th>Score</th>{% endif %}
 								<th>Description</th>
 							</tr>
 						</thead>
 						<tbody>
 							{% for challenge in challenge_list %}
 							<tr>
-								<td><a><span class="tag is-{{ challenge.type }} type-tag">{{ challenge.type }}</span></a></td>
+								<td><a><span
+											class="tag is-{{ challenge.type }} type-tag">{{ challenge.type }}</span></a>
+								</td>
 								<td>
 									{% if challenge.user_solve %}
 									<span class="icon has-text-success"><i class="fas fa-check"></i></span>
 									{% endif %}{{ challenge.name }}
 								</td>
 								<td>{{ challenge.solved }}</td>
+								{% if teamed %}<td>{{ challenge.score }}</td>{% endif %}
 								<td>
 									<pre>{{ challenge.description }}</pre>
 								</td>
@@ -70,36 +73,6 @@
 						</tbody>
 					</table>
 				</div>
-=======
-				<table class="table is-hoverable is-fullwidth" id="challenges-table">
-					<thead>
-						<tr>
-							<th>Type</th>
-							<th>Name</th>
-							<th>Solved</th>
-							{% if teamed %}<th>Score</th>{% endif %}
-							<th>Description</th>
-						</tr>
-					</thead>
-					<tbody>
-						{% for challenge in challenge_list %}
-						<tr>
-							<td><a><span class="tag is-{{ challenge.type }} type-tag">{{ challenge.type }}</span></a></td>
-							<td>
-								{% if challenge.user_solve %}
-								<span class="icon has-text-success"><i class="fas fa-check"></i></span>
-								{% endif %}{{ challenge.name }}
-							</td>
-							<td>{{ challenge.solved }}</td>
-							{% if teamed %}<td>{{ challenge.score }}</td>{% endif %}
-							<td>
-								<pre>{{ challenge.description }}</pre>
-							</td>
-						</tr>
-						{% endfor %}
-					</tbody>
-				</table>
->>>>>>> 00d214f94a449e10987bb4a50464701d616a9e7b
 				<!-- /Challenges -->
 				{% if logined %}
 				<!-- Submit Flag -->
@@ -234,8 +207,7 @@
 				<div class="card">
 					<div class="card-content">
 						<p class="title is-4">
-							{{username.username}}<br>
-							@{{team.teamname}}
+							{{username.username}}@{{team.teamname}}
 						</p>
 						<div class="content has-text-centered">
 							<svg viewBox="0 0 36 36" class="circular-chart">
@@ -247,12 +219,20 @@
 											a 15.9155 15.9155 0 0 1 0 -31.831" />
 								<text x="18" y="20.35" class="percentage">{{solving_rate}}%</text>
 							</svg>
-							<p>Score: {{team.score}}</p>
-							<p>Solved: {{team.solved}}/{{challenge_list|length}}</p>
-							<p>Token: {{team.token}}</p>
+							Score: {{team.score}} |
+							Solved: {{team.solved}}/{{challenge_list|length}}
+							<hr>
+
+							<span style="line-height: 35px">
+								Token:
+								<a id="token" class="button is-white is-small">{{team.token}}</a>
+							</span>
+							<p id="copied" style="display:none">
+								Token Copied!
+							</p>
 						</div>
 						<div class="content has-text-centered">
-							TeamUser:
+							Team Members:
 							{% for teamuser in teamuser_list %}
 							<li>{{ teamuser.username.username }}</li>
 							{% endfor %}
@@ -280,7 +260,7 @@
 	<footer class="footer">
 		<div class="has-text-centered">
 			<p>
-				Copyright © 2018 NTUSTISC.
+				Copyright © {% now "Y" %} NTUSTISC.
 			</p>
 			<a href="/" target="_blank">
 				<span class="icon">
@@ -310,11 +290,22 @@
 	</footer>
 
 	<script>
+		const token = document.getElementById("token");
+		token.onclick = () => {
+			document.getElementById("copied").style.display = "block";
+			setTimeout(() => document.getElementById("copied").style.display = "none", 1000);
+
+			let tmp = document.createElement("input");
+			tmp.setAttribute("value", token.textContent);
+			document.body.appendChild(tmp);
+			tmp.select();
+			document.execCommand("copy");
+			document.body.removeChild(tmp);
+		}
 		const close = document.querySelector('.delete');
 		if (close)
-			close.onclick = () => {
-				close.parentElement.style.display = 'none';
-			}
+			close.onclick = () => close.parentElement.style.display = 'none';
+
 
 		window.addEventListener('scroll', function () {
 			window.requestAnimationFrame(function () {
