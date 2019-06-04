@@ -79,7 +79,7 @@
 				<h1 class="title" id="flag">
 					Submit Flag
 				</h1>
-				<form id="flag-form" method="POST" action="flag/">
+				<form id="flag-form" method="POST" action="/flag">
 					{% csrf_token %}
 					<div class="field has-addons">
 						<div class="control is-expanded">
@@ -155,7 +155,7 @@
 			<!-- Menu Section -->
 			<div class="column">
 				{% if not logined %}
-				<form action="login/" method="POST">
+				<form action="/login" method="POST">
 					{% csrf_token %}
 					{% if ctfing %}
 					<div class="field has-addons">
@@ -237,7 +237,7 @@
 							<li>{{ teamuser.username.username }}</li>
 							{% endfor %}
 						</div>
-						<a href="logout/" class="card-footer-item button is-danger">Logout</a>
+						<a href="/logout" class="card-footer-item button is-danger">Logout</a>
 					</div>
 				</div>
 				<!-- /Team's Information -->

@@ -6,8 +6,8 @@ services:
       context: ./
     image: scoreboard:latest
     container_name: scoreboard
-    ports:
-      - 8000:8000/tcp
+    # ports:
+    #   - 8000:8000/tcp
     volumes:
       - ./:/usr/src/app
     working_dir: /usr/src/app
@@ -20,6 +20,8 @@ services:
   postgresql:
     image: postgres:latest
     container_name: postgresql
+    ports:
+      - 5432:5432/tcp
     environment:
       POSTGRES_DB: scoreboard
       POSTGRES_USER: root
