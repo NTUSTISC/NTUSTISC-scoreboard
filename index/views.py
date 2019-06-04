@@ -24,16 +24,20 @@ def is_login(request):
 
 @require_http_methods(["GET"])
 def index(request):
+    return render(request, "index.html")
+
+@require_http_methods(["GET"])
+def scoreboard(request):
     logined, teamed = is_login(request)
     message = messages.get_messages(request)
     submit_list = Submit.objects.all().order_by('-submit_time')[:20]
-    rank = Username.objects.all().order_by('-solved', 'last_solved_time')[:10]
+    rank_list = Username.objects.all().order_by('-solved', 'last_solved_time')[:10]
     team, username, solving_rate, teamuser_list = None, None, 0, []
     if teamed:
         challenge_list = []
         team = Team.objects.get(teamname=request.session['teamname'])
         submit_list = TeamSubmit.objects.all().order_by('-submit_time')[:20]
-        rank = Team.objects.all().order_by('-score', 'last_solved_time')[:10]
+        rank_list = Team.objects.all().order_by('-score', 'last_solved_time')[:10]
         username = Username.objects.get(username=request.session['username'])
         teamuser_list = TeamUser.objects.filter(team=team).order_by('username__username')
         for challenge in Challenge.objects.filter(is_ctf=True).order_by('type', 'id'):
@@ -53,13 +57,13 @@ def index(request):
         solving_rate = int(username.solved / max(len(challenge_list), 1) * 100)
     else:
         challenge_list = Challenge.objects.filter(is_ctf=False).order_by('type', 'id')
-    return render(request, "index.html", {
-        'rank': rank,
+    return render(request, "scoreboard.html", {
         'team': team,
         'ctfing': settings.CTF,
         'teamed': teamed,
         'logined': logined,
         'username': username,
+        'rank_list': rank_list,
         'submit_list': submit_list,
         'solving_rate': solving_rate,
         'teamuser_list': teamuser_list,
@@ -71,7 +75,7 @@ def login(request):
     username = request.POST.get('username').strip()
     if not 0 < len(username) <= 64:
         messages.add_message(request, messages.ERROR, "Invalid Username.")
-        return redirect("../")
+        return redirect("/scoreboard")
     if Username.objects.filter(username=username).exists():
         username = Username.objects.get(username=username)
     else: username = Username.objects.create(username=username)
@@ -80,7 +84,7 @@ def login(request):
         if not 0 < len(teamname) <= 64:
             if len(teamname) > 64:
                 messages.add_message(request, messages.ERROR, "Invalid Teamname.")
-            return redirect("../")
+            return redirect("/scoreboard")
         if Team.objects.filter(teamname=teamname).exists():
             team = Team.objects.get(teamname=teamname)
             if not TeamUser.objects.filter(username=username).exists():
@@ -88,18 +92,18 @@ def login(request):
                 if token == team.token:
                     if not TeamUser.create(username=username, team=team):
                         messages.add_message(request, messages.ERROR, "The Team is Full.")
-                        return redirect("../")
+                        return redirect("/scoreboard")
                     else: messages.add_message(request, messages.SUCCESS, "Team joined Success.")
                 else:
                     messages.add_message(request, messages.ERROR, "Invalid Token.")
-                    return redirect("../")
+                    return redirect("/scoreboard")
             elif team != TeamUser.objects.get(username=username).team:
                 messages.add_message(request, messages.INFO, "This Username has already joined Team.")
-                return redirect('../')
+                return redirect('/scoreboard')
         else: Team.create(teamname=teamname, username=username)
         request.session['teamname'] = teamname
     request.session['username'] = username.username
-    return redirect("../")
+    return redirect("/scoreboard")
 
 @require_http_methods(["GET", "POST"])
 def logout(request):
@@ -107,7 +111,7 @@ def logout(request):
         del request.session['username']
         del request.session['teamname']
     except: pass
-    finally: return redirect("../")
+    finally: return redirect("/scoreboard")
 
 @require_http_methods(["GET", "POST"])
 def flag(request):
@@ -121,22 +125,22 @@ def flag(request):
                 if not Submit.objects.filter(username=username, challenge=challenge).exists():
                     Submit.create(username=username, challenge=challenge)
                     messages.add_message(request, messages.SUCCESS, "Flag 正確！")
-                    return redirect('../')
+                    return redirect('/scoreboard')
                 else:
                     messages.add_message(request, messages.INFO, "Flag 是正確沒錯啦，但你已經解過這題了")
-                    return redirect('../')
+                    return redirect('/scoreboard')
             else:
                 team = Team.objects.get(teamname=request.session['teamname'])
                 if not TeamSubmit.objects.filter(team=team, challenge=challenge).exists():
                     TeamSubmit.create(team=team, challenge=challenge)
                     messages.add_message(request, messages.SUCCESS, "Flag 正確！")
-                    return redirect('../')
+                    return redirect('/scoreboard')
                 else:
                     messages.add_message(request, messages.INFO, "Flag 是正確沒錯啦，但你已經解過這題了")
-                    return redirect('../')
+                    return redirect('/scoreboard')
         else:
             messages.add_message(request, messages.ERROR, "Flag 錯誤 QQ")
-            return redirect('../')
+            return redirect('/scoreboard')
     else:
         challenge = Challenge.objects.get(name="Just Here")
         return HttpResponse("""
