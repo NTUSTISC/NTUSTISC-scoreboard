@@ -45,7 +45,7 @@
 ### Score
 - Score Base: 500
 - Minimum Score: 100
-- Transform From (sigmoid function)[https://en.wikipedia.org/wiki/Sigmoid_function]
+- Transform From [sigmoid function](https://en.wikipedia.org/wiki/Sigmoid_function)
 	- Function Revise: `2 / (1 + exp(3 * x))`
 - Function
 	- max(Base * Revise, Minimum)
