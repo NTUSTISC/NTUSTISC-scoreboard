@@ -41,7 +41,7 @@ class Challenge(models.Model):
 		self.save()
 
 	def rescore(self):
-		self.score = score_func(self.solved / len(Team.objects.all()))
+		self.score = score_func(max(self.solved - 1, 0) / len(Team.objects.all()))
 		self.save()
 
 class Submit(models.Model):
@@ -63,7 +63,7 @@ class Submit(models.Model):
 
 class Team(models.Model):
 	teamname = models.CharField(max_length=100, null=False, blank=False)
-	token = models.CharField(max_length=10, default=str(hexlify(urandom(5)), "utf-8"))
+	token = models.CharField(max_length=10)
 	score = models.IntegerField(default=0)
 	solved = models.IntegerField(default=0)
 	last_solved_time = models.DateTimeField(default=timezone.now)
@@ -83,7 +83,8 @@ class Team(models.Model):
 		self.save()
 
 	def create(teamname, username):
-		team = Team.objects.create(teamname=teamname)
+		token = str(hexlify(urandom(5)), "utf-8")
+		team = Team.objects.create(teamname=teamname, token=token)
 		TeamUser.create(team=team, username=username)
 		for challenge in Challenge.objects.filter(is_ctf=True):
 			old_score = challenge.score

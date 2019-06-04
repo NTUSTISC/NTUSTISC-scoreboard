@@ -41,7 +41,7 @@ class TeamAdmin(admin.ModelAdmin):
 		(None, {'fields': ['teamname', 'token', 'score', 'solved', 'last_solved_time']}),
 	]
 	inlines = [TeamUserInline, TeamSubmitInline]
-	list_display = ('id', 'teamname', 'score', 'solved', 'last_solved_time')
+	list_display = ('id', 'teamname', 'token', 'score', 'solved', 'last_solved_time')
 	list_filter = ['teamname', 'score', 'solved']
 	search_fields = ['teamname', 'score']
 

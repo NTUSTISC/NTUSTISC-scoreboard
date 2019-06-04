@@ -8,6 +8,8 @@ from django.views.decorators.http import require_http_methods
 
 from .models import *
 
+import os
+
 def is_login(request):
     logined, teamed = False, False
     if 'username' in request.session.keys():
@@ -81,15 +83,19 @@ def login(request):
             return redirect("../")
         if Team.objects.filter(teamname=teamname).exists():
             team = Team.objects.get(teamname=teamname)
-            if not TeamUser.objects.filter(username=username, team=team).exists():
+            if not TeamUser.objects.filter(username=username).exists():
                 token = request.POST.get('token').strip()
                 if token == team.token:
                     if not TeamUser.create(username=username, team=team):
-                        messages.add_message(request, messages.ERROR, "The Team Is Full.")
+                        messages.add_message(request, messages.ERROR, "The Team is Full.")
                         return redirect("../")
+                    else: messages.add_message(request, messages.SUCCESS, "Team joined Success.")
                 else:
                     messages.add_message(request, messages.ERROR, "Invalid Token.")
                     return redirect("../")
+            elif team != TeamUser.objects.get(username=username).team:
+                messages.add_message(request, messages.INFO, "This Username has already joined Team.")
+                return redirect('../')
         else: Team.create(teamname=teamname, username=username)
         request.session['teamname'] = teamname
     request.session['username'] = username.username
@@ -144,15 +150,16 @@ def flag(request):
 @require_http_methods(["GET"])
 def ctf_finish(request):
     if not settings.CTF:
-        with open(settings.BASE_DIR + "/" + settings.CTF_NAME, "w") as file:
-            file.write(serializers.serialize("json", Challenge.objects.filter(is_ctf=True)) + "\n")
-            file.write(serializers.serialize("json", Team.objects.all()) + "\n")
-            file.write(serializers.serialize("json", TeamUser.objects.all()) + "\n")
-            file.write(serializers.serialize("json", TeamSubmit.objects.all()) + "\n")
-        for team in Team.objects.all():
-            team.delete()
-        for challenge in Challenge.objects.filter(is_ctf=True):
-            challenge.delete()
+        if not os.path.isfile(settings.BASE_DIR + "/" + settings.CTF_NAME):
+            with open(settings.BASE_DIR + "/" + settings.CTF_NAME, "w") as file:
+                file.write(serializers.serialize("json", Challenge.objects.filter(is_ctf=True).order_by("-score", "solved", "type", "name")) + "\n")
+                file.write(serializers.serialize("json", Team.objects.all().order_by("-score", "-solved", "teamname")) + "\n")
+                file.write(serializers.serialize("json", TeamUser.objects.all().order_by("-team__score", "-team__solved", "username__username")) + "\n")
+                file.write(serializers.serialize("json", TeamSubmit.objects.all().order_by("-submit_time")) + "\n")
+            for team in Team.objects.all():
+                team.delete()
+            for challenge in Challenge.objects.filter(is_ctf=True):
+                challenge.delete()
         return HttpResponse("CTF is finish!")
     else:
         return HttpResponse("CTF is ongoing!")
