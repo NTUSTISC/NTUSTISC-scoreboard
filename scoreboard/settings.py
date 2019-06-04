@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 CTF = False
-CTF_NAME = "tiny_ctf"
+CTF_NAME = "mini_ctf"
 
 SHELL = True
 

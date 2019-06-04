@@ -50,3 +50,5 @@
 - Function
 	- max(Base * Revise, Minimum)
 	- max(int(1000 / (1 + exp(3 * x))), 100)
+- Function(x)
+	- x = max(solved - 1, 0) / len(Team)
