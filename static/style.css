@@ -80,7 +80,16 @@ pre {
     color: rgba(0, 0, 0, 0.7);
 }
 
-.tag:not(body).is-stego {
+.tag:not(body).is-forensic {
     background-color: #ff3860;
     color: #fff;
+}
+
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+table {
+    min-width: 512px ;
 }
