@@ -13,7 +13,7 @@ services:
     working_dir: /usr/src/app
     environment:
       - PYTHONUNBUFFERED=0
-    command: bash /usr/src/app/entrypoint.sh
+    # command: bash /usr/src/app/entrypoint.sh
     networks:
       - ntustisc
 
