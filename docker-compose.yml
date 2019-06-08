@@ -31,6 +31,7 @@ services:
     container_name: nginx
     ports:
       - 80:80/tcp
+      - 443:443/tcp
     volumes:
       - ./:/var/www/scoreboard
       - ./nginx/log:/var/log/nginx
@@ -38,6 +39,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/scoreboard.conf:/etc/nginx/sites-enabled/scoreboard.conf
       - ./nginx/scoreboard.conf:/etc/nginx/sites-available/scoreboard.conf
+      - /etc/letsencrypt/live/isc.taiwan-te.ch:/etc/nginx/ssl
     command: ["nginx", "-g", "daemon off;"]
     networks: 
       - ntustisc

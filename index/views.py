@@ -155,7 +155,7 @@ def flag(request):
 @require_http_methods(["GET"])
 def ctf_finish(request):
     if not settings.CTF:
-        if not os.path.isfile(settings.BASE_DIR + "/" + settings.CTF_NAME):
+        if not os.path.isfile("{Base}/{name}.json".format(base=settings.BASE_DIR, name=settings.CTF_NAME)):
             with open(settings.BASE_DIR + "/" + settings.CTF_NAME, "w") as file:
                 file.write(serializers.serialize("json", Challenge.objects.filter(is_ctf=True).order_by("-score", "solved", "type", "name")) + "\n")
                 file.write(serializers.serialize("json", Team.objects.all().order_by("-score", "-solved", "teamname")) + "\n")
