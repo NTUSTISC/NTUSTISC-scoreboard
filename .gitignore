@@ -119,3 +119,4 @@ dmypy.json
 # dev/killua4564
 migrations/
 *.sql
+*.json

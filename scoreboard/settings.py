@@ -27,10 +27,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 
+DEV = True
+
 CTF = False
 CTF_NAME = "mini_ctf"
-
-SHELL = True
 
 # Application definition
 
@@ -128,11 +128,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static/")
-]
-
-STATIC_ROOT = STATICFILES_DIRS[0]
+if DEV: STATICFILES_DIRS = [os.path.join(BASE_DIR, "static/")]
+else: STATIC_ROOT = os.path.join(BASE_DIR, "static/")
 
 from django.contrib.messages import constants as messages
 

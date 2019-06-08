@@ -40,6 +40,12 @@ class Challenge(models.Model):
 		self.solved += 1
 		self.save()
 
+	def finish(self):
+		self.is_ctf = False
+		self.solved = 0
+		self.score = 0
+		self.save()
+
 	def rescore(self):
 		self.score = score_func(max(self.solved - 1, 0) / len(Team.objects.all()))
 		self.save()

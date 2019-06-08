@@ -15,7 +15,9 @@
 	- Whether CTF is ongoing
 - CTF_NAME
 	- This CTF's name. The filename will be stored CTF data.
-- SHELL
+- DEV
+	- Develop Mode
+	- Create STATICFILES_DIRS or STATIC_ROOT
 	- Whether run [postgresql.py](postgresql.py) to create initialization objects
 
 ## Feature
