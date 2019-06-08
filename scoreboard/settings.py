@@ -23,11 +23,11 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 's(b529xzh1x2b0%^pfil*)dz8f^$ro7f$)njompzqj($dl*y2e'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["*"]
 
-DEV = True
+DEV = False
 
 CTF = False
 CTF_NAME = "mini_ctf"
