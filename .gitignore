@@ -119,3 +119,8 @@ dmypy.json
 # dev/killua4564
 migrations/
 *.sql
+*.json
+*.pem
+
+psql_data/
+secret*

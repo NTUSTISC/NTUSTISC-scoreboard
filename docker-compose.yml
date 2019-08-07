@@ -6,25 +6,45 @@ services:
       context: ./
     image: scoreboard:latest
     container_name: scoreboard
-    ports:
-      - 8000:8000/tcp
     volumes:
-      - ./:/usr/src/app
-    working_dir: /usr/src/app
+      - ./:/var/www/scoreboard
+      - ./uwsgi:/var/log/uwsgi
+    working_dir: /var/www/scoreboard
     environment:
       - PYTHONUNBUFFERED=0
-    command: bash /usr/src/app/entrypoint.sh
+    command: bash entrypoint.sh
     networks:
       - ntustisc
 
   postgresql:
     image: postgres:latest
     container_name: postgresql
+    volumes:
+      - ./psql_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: scoreboard
       POSTGRES_USER: root
       POSTGRES_PASSWORD: P@ssW0rd
     networks:
+      - ntustisc
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    volumes:
+      - ./static:/var/www/scoreboard/static
+      - ./nginx/log:/var/log/nginx
+      - ./uwsgi_params:/etc/nginx/uwsgi_params
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
+      - ./nginx/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      # - /etc/letsencrypt/live/isc.taiwan-te.ch/privkey.pem:/etc/nginx/ssl/privkey.pem
+      # - /etc/letsencrypt/live/isc.taiwan-te.ch/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+    command: ["nginx", "-g", "daemon off;"]
+    networks: 
       - ntustisc
 
 networks:

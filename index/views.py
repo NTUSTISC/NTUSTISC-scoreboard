@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from .models import *
 
 import os
+import requests
 
 def is_login(request):
     logined, teamed = False, False
@@ -22,41 +23,43 @@ def is_login(request):
                 teamed = True
     return logined, teamed and settings.CTF
 
+def telegram_message(message):
+    link = "https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={text}".format(
+        token=settings.TELEGRAM_TOKEN, chat_id=settings.TELEGRAM_CHAT_ID, text=message
+    )
+    return requests.get(link).status_code == 200
+
 @require_http_methods(["GET"])
 def index(request):
     return render(request, "index.html")
 
 @require_http_methods(["GET"])
 def scoreboard(request):
+    challenge_list = []
     logined, teamed = is_login(request)
     message = messages.get_messages(request)
     submit_list = Submit.objects.all().order_by('-submit_time')[:20]
     rank_list = Username.objects.all().order_by('-solved', 'last_solved_time')[:10]
     team, username, solving_rate, teamuser_list = None, None, 0, []
     if teamed:
-        challenge_list = []
         team = Team.objects.get(teamname=request.session['teamname'])
         submit_list = TeamSubmit.objects.all().order_by('-submit_time')[:20]
         rank_list = Team.objects.all().order_by('-score', 'last_solved_time')[:10]
         username = Username.objects.get(username=request.session['username'])
         teamuser_list = TeamUser.objects.filter(team=team).order_by('username__username')
         for challenge in Challenge.objects.filter(is_ctf=True).order_by('type', 'id'):
-            challenge.user_solve = TeamSubmit.objects.filter(
-                team=team, challenge=challenge
-            ).exists()
-            challenge_list.append(challenge)
+            challenge.user_solve = TeamSubmit.objects.filter(team=team, challenge=challenge).exists()
+            challenge_list.append((challenge, TeamSubmit.objects.filter(challenge=challenge)))
         solving_rate = int(team.solved / max(len(challenge_list), 1) * 100)
     elif logined:
-        challenge_list = []
         username = Username.objects.get(username=request.session['username'])
         for challenge in Challenge.objects.filter(is_ctf=False).order_by('type', 'id'):
-            challenge.user_solve = Submit.objects.filter(
-                username=username, challenge=challenge
-            ).exists()
-            challenge_list.append(challenge)
+            challenge.user_solve = Submit.objects.filter(username=username, challenge=challenge).exists()
+            challenge_list.append((challenge, Submit.objects.filter(challenge=challenge)))
         solving_rate = int(username.solved / max(len(challenge_list), 1) * 100)
-    else:
-        challenge_list = Challenge.objects.filter(is_ctf=False).order_by('type', 'id')
+    else: 
+        for challenge in Challenge.objects.filter(is_ctf=False).order_by('type', 'id'):
+            challenge_list.append((challenge, Submit.objects.filter(challenge=challenge)))
     return render(request, "scoreboard.html", {
         'team': team,
         'ctfing': settings.CTF,
@@ -100,7 +103,12 @@ def login(request):
             elif team != TeamUser.objects.get(username=username).team:
                 messages.add_message(request, messages.INFO, "This Username has already joined Team.")
                 return redirect('/scoreboard')
-        else: Team.create(teamname=teamname, username=username)
+        else: 
+            if not TeamUser.objects.filter(username=username).exists():
+                Team.create(teamname=teamname, username=username)
+            else:
+                messages.add_message(request, messages.INFO, "This Username has already joined Team.")
+                return redirect('/scoreboard')
         request.session['teamname'] = teamname
     request.session['username'] = username.username
     return redirect("/scoreboard")
@@ -124,6 +132,7 @@ def flag(request):
             if not teamed:
                 if not Submit.objects.filter(username=username, challenge=challenge).exists():
                     Submit.create(username=username, challenge=challenge)
+                    telegram_message("@{} sloved {}".format(username.username, challenge.name))
                     messages.add_message(request, messages.SUCCESS, "Flag 正確！")
                     return redirect('/scoreboard')
                 else:
@@ -133,6 +142,7 @@ def flag(request):
                 team = Team.objects.get(teamname=request.session['teamname'])
                 if not TeamSubmit.objects.filter(team=team, challenge=challenge).exists():
                     TeamSubmit.create(team=team, challenge=challenge)
+                    telegram_message("{}@{} sloved {}".format(username.usermame, team.teamname, challenge.name))
                     messages.add_message(request, messages.SUCCESS, "Flag 正確！")
                     return redirect('/scoreboard')
                 else:
@@ -154,7 +164,7 @@ def flag(request):
 @require_http_methods(["GET"])
 def ctf_finish(request):
     if not settings.CTF:
-        if not os.path.isfile(settings.BASE_DIR + "/" + settings.CTF_NAME):
+        if not os.path.isfile("{Base}/{name}.json".format(base=settings.BASE_DIR, name=settings.CTF_NAME)):
             with open(settings.BASE_DIR + "/" + settings.CTF_NAME, "w") as file:
                 file.write(serializers.serialize("json", Challenge.objects.filter(is_ctf=True).order_by("-score", "solved", "type", "name")) + "\n")
                 file.write(serializers.serialize("json", Team.objects.all().order_by("-score", "-solved", "teamname")) + "\n")
@@ -163,7 +173,7 @@ def ctf_finish(request):
             for team in Team.objects.all():
                 team.delete()
             for challenge in Challenge.objects.filter(is_ctf=True):
-                challenge.delete()
+                challenge.finish()
         return HttpResponse("CTF is finish!")
     else:
         return HttpResponse("CTF is ongoing!")
