@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods
 from .models import *
 
 import os
+import requests
 
 def is_login(request):
     logined, teamed = False, False
@@ -21,6 +22,12 @@ def is_login(request):
             if Team.objects.filter(teamname=request.session['teamname']).exists():
                 teamed = True
     return logined, teamed and settings.CTF
+
+def telegram_message(message):
+    link = "https://api.telegram.org/bot{token}/sendMessage?chat_id={chat_id}&text={text}".format(
+        token=settings.TELEGRAM_TOKEN, chat_id=settings.TELEGRAM_CHAT_ID, text=message
+    )
+    return requests.get(link).status_code == 200
 
 @require_http_methods(["GET"])
 def index(request):
@@ -125,6 +132,7 @@ def flag(request):
             if not teamed:
                 if not Submit.objects.filter(username=username, challenge=challenge).exists():
                     Submit.create(username=username, challenge=challenge)
+                    telegram_message("@{} sloved {}".format(username.username, challenge.name))
                     messages.add_message(request, messages.SUCCESS, "Flag 正確！")
                     return redirect('/scoreboard')
                 else:
@@ -134,6 +142,7 @@ def flag(request):
                 team = Team.objects.get(teamname=request.session['teamname'])
                 if not TeamSubmit.objects.filter(team=team, challenge=challenge).exists():
                     TeamSubmit.create(team=team, challenge=challenge)
+                    telegram_message("{}@{} sloved {}".format(username.usermame, team.teamname, challenge.name))
                     messages.add_message(request, messages.SUCCESS, "Flag 正確！")
                     return redirect('/scoreboard')
                 else:

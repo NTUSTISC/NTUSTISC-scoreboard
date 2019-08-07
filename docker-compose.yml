@@ -19,6 +19,8 @@ services:
   postgresql:
     image: postgres:latest
     container_name: postgresql
+    volumes:
+      - ./psql_data:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: scoreboard
       POSTGRES_USER: root
@@ -33,14 +35,14 @@ services:
       - 80:80/tcp
       - 443:443/tcp
     volumes:
-      - ./:/var/www/scoreboard
+      - ./static:/var/www/scoreboard/static
       - ./nginx/log:/var/log/nginx
       - ./uwsgi_params:/etc/nginx/uwsgi_params
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./nginx/scoreboard.conf:/etc/nginx/sites-enabled/scoreboard.conf
-      - ./nginx/scoreboard.conf:/etc/nginx/sites-available/scoreboard.conf
-      - /etc/letsencrypt/live/isc.taiwan-te.ch/privkey.pem:/etc/nginx/ssl/privkey.pem
-      - /etc/letsencrypt/live/isc.taiwan-te.ch/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      - ./nginx/ssl/privkey.pem:/etc/nginx/ssl/privkey.pem
+      - ./nginx/ssl/fullchain.pem:/etc/nginx/ssl/fullchain.pem
+      # - /etc/letsencrypt/live/isc.taiwan-te.ch/privkey.pem:/etc/nginx/ssl/privkey.pem
+      # - /etc/letsencrypt/live/isc.taiwan-te.ch/fullchain.pem:/etc/nginx/ssl/fullchain.pem
     command: ["nginx", "-g", "daemon off;"]
     networks: 
       - ntustisc
