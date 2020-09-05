@@ -297,7 +297,7 @@
 
 	<script>
 		const token = document.getElementById("token");
-		token.onclick = () => {
+		token?.onclick = () => {
 			document.getElementById("copied").style.display = "block";
 			setTimeout(() => document.getElementById("copied").style.display = "none", 1000);
 
